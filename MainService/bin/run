@@ -1,0 +1,20 @@
+#!/usr/bin/env node
+
+const http = require('http');
+// process.env['NODE_ENV'] = 'production';
+const config = require('../config')[process.env.NODE_ENV || 'development'];
+
+const log = config.log();
+const service = require('../server/service')(config);
+// console.log("🚀 run", service.get('env'))
+
+const server = http.createServer(service);
+
+// Important - a service should not have a fixed port but should randomly choose one
+server.listen(process.env.PORT || 5000);
+
+server.on('listening', () => {
+  log.info(
+    `Hi there! I'm Main-Service and my port is: ${server.address().port} in ${service.get('env')} mode.`,
+  );
+});
